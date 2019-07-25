@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const getNotes = require('./notes');
+const Notes = require('./notes.js');
 const yargs = require('yargs');
 
 // Customize yargs version
@@ -21,22 +21,28 @@ yargs.command({
             type: 'string'
         }
     },
-    handler: function (argv) { console.log('Title: ' + argv.title + '\n' +
-                                           'Body: ' + argv.body) }
+    handler: function (argv) { Notes.addNote(argv.title, argv.body); }
 })
 
 // Create remove command
 yargs.command({
     command: 'remove',
     describe: 'Remove a note',
-    handler: function () { console.log('Removing the note') }
+    builder: {
+        title:{
+            describe: "Note title",
+            demandOption: true,
+            type: 'string'
+        }
+    },
+    handler: function (argv) { Notes.removeNote(argv.title); }
 })
 
 // Create list command
 yargs.command({
     command: 'list',
     describe: 'Listing notes',
-    handler: function() { console.log('Listing notes') }
+    handler: function() { console.log('Listing notes'); }
 })
 
 // Create read command
