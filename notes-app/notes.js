@@ -5,15 +5,41 @@ const getNotes = function() {
     return "Your notes...";
 }
 
-const addNote = function(title, body) {
+const readNote = (title) =>{
 
     const notes = loadNotes();
+    note = notes.find((note) => note.title === title);
 
-    const duplicateNotes = notes.filter(function(note){
-        return note.title === title;
-    })
+    if(note){
+        console.log(chalk.inverse(note.title));
+        console.log(note.body);
+    } else {
+        console.log(chalk.bgRed('No entry found for specified key'));
+    }
 
-    if(duplicateNotes.length === 0){
+}
+
+const listNotes = () => {
+
+    const notes = loadNotes();
+    console.log(chalk.bgGreen('You notes'));
+    
+    notes.forEach(note => {
+
+        console.log(note.title);
+        
+    });
+
+}
+
+const addNote = (title, body) => {
+    const notes = loadNotes();
+
+    // const duplicateNotes = notes.filter((note) => note.title === title);
+
+    const duplicateNote = notes.find((note) => note.title === title);
+
+    if(duplicateNote){
 
         notes.push({
             title: title,
@@ -28,12 +54,10 @@ const addNote = function(title, body) {
 
     }
 
-
-
     saveNotes(notes);
 }
 
-const saveNotes = function(notes){
+const saveNotes = (notes) => {
 
     const dataJSON = JSON.stringify(notes);
 
@@ -57,15 +81,13 @@ const loadNotes = function(){
     }
 }
 
-const removeNote = function(title){
+const removeNote = (title) => {
 
     const notesBuffer = loadNotes();
 
     const arrayCountBefore = notesBuffer.length;
 
-    const dataToSave = notesBuffer.filter(function(note){
-        return note.title !== title;
-    });
+    const dataToSave = notesBuffer.filter((note) => note.title !== title);
 
     const arrayCountAfter = dataToSave.length;
 
@@ -85,5 +107,7 @@ const removeNote = function(title){
 module.exports = {
     getNotes: getNotes,
     addNote: addNote,
-    removeNote: removeNote
+    removeNote: removeNote,
+    listNotes: listNotes,
+    readNote: readNote
 }
