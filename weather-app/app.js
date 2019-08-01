@@ -1,32 +1,25 @@
-const request = require('request');
-const llurl = 'https://api.mapbox.com/geocoding/v5/mapbox.places/Minsk.json?access_token=pk.eyJ1Ijoic2FyZ2VydXMiLCJhIjoiY2p5cmQ0MjVuMDFpaDNjbXEwMmVnbzd4aiJ9.7QZfrMrXgU9IhlPRxoiYeg&limit=1';
+const geocode = require('./utils/geocode.js')
+const forecast = require('./utils/forecast.js')
 
-let url = "";
+console.log(process.argv)
 
-request({url: llurl, json:true}, (error, response) => {
-    setUrlParamters(response.body.features[0].center[1],response.body.features[0].center[0]);
-    });
+const place = process.argv[2]
 
-    setUrlParamters = function(latitude,longitude) {
-        url = 'https://api.darksky.net/forecast/b6cec463447afd5055ffdcdde991ef36/' +
-                longitude + ',' +
-                latitude + '?' +
-                'units=si';
+if(!place){
+    return console.log('Please provide place as an cmd argument')
+}
+
+geocode(place, (error, data) =>{
+
+    if (error){
+        return console.log(error)
     }
 
-    //fucked up!
-
-request({ url: url, json: true }, (error,response) => {
-    if (error) {
-        console.log('Unable to connet to weather service.');
-    } else if (response.body.error) {
-        console.log(response.body.error);
-    } else { 
-        console.log(response.body.daily.data[0].summary +
-                ' It is currently ' + response.body.currently.temperature + 
-                ' degrees out. There is a ' +  response.body.currently.precipProbability + 
-                ' chance of rain.') 
-    }
-
+    forecast(data.latitude, data.longitude, (error, forecastData) => {
+        if (error){
+            return console.log(error)
+        }
+        console.log(data.location)
+        console.log(forecastData)
+        })
 })
-
